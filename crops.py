@@ -1,0 +1,31 @@
+def cropss(crop_name):
+    crop_d= {
+        "Wheat": ["U.P., Punjab, Haryana, Rajasthan, M.P., bihar", "rabi", "Sri Lanka, United Arab Emirates, Taiwan"],
+        "Paddy": ["W.B., U.P., Andhra Pradesh, Punjab, T.N.", "kharif", "Bangladesh, Saudi Arabia, Iran"],
+        "Barley": ["Rajasthan, Uttar Pradesh, Madhya Pradesh, Haryana, Punjab", "rabi", "Oman, UK, Qatar, USA"],
+        "Maize": ["Karnataka, Andhra Pradesh, Tamil Nadu, Rajasthan, Maharashtra", "kharif",
+                  "Hong Kong, United Arab Emirates, France"],
+        "Bajra": ["Rajasthan, Maharashtra, Haryana, Uttar Pradesh and Gujarat", "kharif",
+                  "Oman, Saudi Arabia, Israel, Japan"],
+        "Cotton": ["Punjab, Haryana, Maharashtra, Tamil Nadu, Madhya Pradesh, Gujarat","Kharif"," China, Bangladesh, Egypt"],
+        "Gram": ["Madhya Pradesh, Maharashtra, Rajasthan, Uttar Pradesh, Andhra Pradesh & Karnataka", "Kharif,Rabi",
+                 "Veitnam, Spain, Myanmar"],
+        "Groundnut": ["Andhra Pradesh, Gujarat, Tamil Nadu, Karnataka, and Maharashtra", "kharif",
+                      "Indonesia, Jordan, Iraq"],
+        "Jowar": ["Maharashtra, Karnataka, Andhra Pradesh, Madhya Pradesh, Gujarat", "Kharif,Rabi",
+                  "Torronto, Sydney, New York"],
+        "Moong": ["Rajasthan, Maharashtra, Andhra Pradesh", "rabi", "Qatar, United States, Canada"],
+        "Soyabean": ["Madhya Pradesh, Maharashtra, Rajasthan, Madhya Pradesh and Maharashtra", "kharif",
+                     "Spain, Thailand, Singapore"],
+        "Sugarcane": ["Uttar Pradesh, Maharashtra, Tamil Nadu, Karnataka, Andhra Pradesh", "kharif",
+                      "Kenya, United Arab Emirates, United Kingdom"],
+        "Coconut": ["Kerala, Karnataka, Andhra Pradesh Tamil Nadu", "Whole Year", "Usa,Canada,Singapore,Dubai"],
+        "Chillies": ["Andhra Pradesh, Maharashtra, Karnataka, Orissa, Madhya Pradesh", "Kharif,Rabi",
+                     "Usa,Sri-Lanka,Canada,Dubai"],
+        "Potato": ["Madhya Pradesh, Maharashtra, Madhya Pradesh and Maharashtra", "Kharif,Rabi",
+                   "China, Bangladesh,Usa"],
+        "Peas": ["Punjab, Haryana, Maharashtra, Tamil Nadu, Madhya Pradesh, Gujarat", "Kharif", "Usa,Singapore,Dubai"],
+        "Turmeric": ["Tamil Nadu , Orissa ,West Bengal", "kharif, Rabi", "Usa,Singapore,Dubai,Qatar,Bangladesh"],
+        "Onion": ["Maharashtra,Madhya Pradesh,Karnataka,Gujarat","Kharif ,Rabi","Malaysia,Sri Lanka,Singapore,Bangladesh"]
+    }
+    return crop_d[crop_name]

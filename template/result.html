@@ -1,0 +1,35 @@
+{% extends "template.html" %}
+
+{% block code_block %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-6">
+            <div class="card">
+                <div class="card-block">
+                    <div class="card-image">
+                        <img class="img-fluid" src="../static/images/{{result}}.jpg">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-3">
+            <div class="card">
+                <div class="card-block">
+                    <div class="card" style="width: 18rem;">
+                        <div class="card-header">
+                            <b style="color:red">Crop Suggestion</b>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">Crop Suitable:<b> {{ result }}</b></li>
+                            <li class="list-group-item">Est. Production :<b> {{ yeild }} kg/anually</b></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
