@@ -10,7 +10,7 @@ import pickle
 class RFTest:
 
     def __init__(self):
-        self.filename = "RF_model.sav"
+        self.filename = "RF_model.pkl"
         self.df = pd.read_csv('dataset/1.csv',converters={'Season': str.strip})
         self.cropsDict = dict()
         self.seasonDict = dict()

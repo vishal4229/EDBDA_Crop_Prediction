@@ -54,21 +54,25 @@
     </div>
         <br>
 <div id = "">
-        <form action="/predict" method="POST">
+        <form action="/predict" method="POST"
+        oninput='rainfall.setCustomValidity((rainfall.value<200 || rainfall.value>1800) ? "rainfall must be in (200-1800)" : "");
+        ph.setCustomValidity((ph.value<1 || ph.value>9) ? "ph must be in (1-9)" : "");
+        temperature.setCustomValidity((temperature.value<5 || temperature.value>50) ? "Temperature must be in (5-50)" : "")'
+        >
 
             <div class="form-group slideright" >
-                <label >Rainfall (mm)</label>
+                <label >Rainfall (200-1800)mm</label>
                 <input type="number" step="any" name="rainfall" class="form-control" required>
             </div>
 
             <div class="form-group slideleft">
-                <label >Temperature (C')</label>
+                <label >Temperature (5-50)°C</label>
                 <input type="number" step="any" name="temperature" class="form-control" required>
             </div>
 
             <div class="form-group slideright">
                 <label >PH (1-9)</label>
-                <input type="number" step="any" name="ph" class="form-control" required>
+                <input type="number" step="any" name="ph" class="form-control"  required>
             </div>
 
             <div class="form-group slideleft">
@@ -116,6 +120,17 @@
 </div>
 {% block body %}
 <script>
+     function check(input) {
+   if (input.value<1 ||
+       input.value>9) {
+     input.setCustomValidity('"' + input.value + '" is not a feeling.');
+   } else {
+     // input is fine -- reset the error message
+     input.setCustomValidity('');
+   }
+ }
+
+
     var ad = 0;
     function hun(ssd){
         console.log(ad +"hi")

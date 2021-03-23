@@ -65,11 +65,11 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random
 # Creating xgboost model
 from sklearn.ensemble import RandomForestRegressor
 
-model = RandomForestRegressor(n_estimators=1000, random_state=100)
+model = RandomForestRegressor()
 model.fit(X_train, y_train.values.ravel())
 preds = model.predict(X_test)
 # Saving the model
-filename = 'RF_model.sav'
+filename = 'RF_model.pkl'
 joblib.dump(model, filename)
 
 print("-------------------")
