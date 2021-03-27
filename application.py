@@ -154,6 +154,9 @@ def index():
 
 @app.route('/predict', methods=["POST"])
 def predict():
+    crop_d = []
+    crop_d1 =[]
+    crop_fr =[]
     rainfall = float(request.form['rainfall'])
     temperature = float(request.form['temperature'])
     ph = float(request.form['ph'])
@@ -164,15 +167,30 @@ def predict():
     district = request.form['district']
     season = season.strip()
     print(state)
-    print(season,"Hii")
+    print(season, "Hii")
     print(temperature, rainfall, ph, area, season)
+
     model = XgbtTest()
     crop = model.xgbt_Predict(rainfall, temperature, ph)
-    #
     model = RFTest()
     yeild = model.RF_Predict(state, crop, season, district, area)
+    for i in range(0,3):
+        crop_d.append(crops.cropdes(crop[i])[crop[i]])
+        crop_d1.append(crops.cropss(crop[i]))
+        crop_fr.append(crops.fert(crop[i]))
 
-    return render_template("result.html", result=crop, yeild=yeild)
+    print(crop_d)
+    # print(crop_d1)
+    print(crop_fr)
+    result = {
+        'crop' : crop,
+        'yeild' : yeild,
+        'crop_des1' : crop_d,
+        'crop_d1':crop_d1,
+        'crop_d2':crop_d1,
+        'crop_fr':crop_fr
+    }
+    return render_template("result.html", result = result)
 
 
 # @app.context_processor
@@ -182,7 +200,7 @@ def index1():
 
 
 @app.route('/send')
-def add_numbers():
+def senddis():
     dis3 = Filter()
     dis3 = dis3.findDistrict()
     # dis1 = {
@@ -282,9 +300,10 @@ def trend():
 
         "top": top,
         "bot": bot,
-        "topyear":topyear
+        "topyear": topyear
 
     }
     return render_template("/trend.html", data1=data1)
+
 
 app.run(host='127.0.0.1', port=4000, debug=True)

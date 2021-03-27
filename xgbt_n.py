@@ -7,7 +7,7 @@ from sklearn.metrics import accuracy_score,confusion_matrix
 import pickle
 
 
-file_name = "xgb_model.pkl"
+file_name = "RF_Crop.pkl"
 
 #Read the dataset
 df = pd.read_csv('dataset/croppred.csv')
@@ -31,8 +31,10 @@ y = df.iloc[:,3].values
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.4, random_state = 12345)
 
 #Creating xgboost model
-from xgboost import XGBClassifier
-model = XGBClassifier(objective="multi:softprob", random_state=42)
+# from xgboost import XGBClassifier
+from sklearn.ensemble import RandomForestClassifier
+# model = XGBClassifier(objective="multi:softprob", random_state=42)
+model = RandomForestClassifier()
 model = model.fit(x_train,y_train)
 #Saving the model
 pickle.dump(model, open(file_name, "wb"))

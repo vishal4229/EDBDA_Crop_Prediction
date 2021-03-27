@@ -9,8 +9,8 @@ from sklearn.metrics import r2_score
 import pickle
 
 # Read the dataset
-df = pd.read_csv('dataset/1.csv', index_col='Crop_Year',converters={'Season': str.strip})
-df = df.drop(['Unnamed: 0'],axis=1)
+df = pd.read_csv('dataset/1.csv', index_col='Crop_Year', converters={'Season': str.strip})
+df = df.drop(['Unnamed: 0'], axis=1)
 df = df[df['Production'].notna()]
 
 # Encoding Crop in dictionary Eg {'Bajra':1}
@@ -69,7 +69,7 @@ model = RandomForestRegressor()
 model.fit(X_train, y_train.values.ravel())
 preds = model.predict(X_test)
 # Saving the model
-filename = 'RF_model.pkl'
+filename = 'RF_model.h5'
 joblib.dump(model, filename)
 
 print("-------------------")

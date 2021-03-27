@@ -3,12 +3,13 @@
 
 
     {% block code_block %}
+<body style="background-color: rebeccapurple">
 <div class="container-fluid" style="width:100%;height:100%">
     <div class="container-fluid" style="width:100%;height:100%">
-        <h1>Demo Suggestion </h1>
+        <h2 style="color:white">State-Wise Crops</h2>
         <form action ="/suggestedcrops" method="POST">
             <div class="form-group">
-                <label >State</label>
+                <label style="color:white" >State</label>
                 <select name="state" class="form-control">
                     <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
                     <option value="Andhra Pradesh">Andhra Pradesh</option>
@@ -53,4 +54,5 @@
         </form>
     </div>
 </div>
+</body>
     {% endblock %}

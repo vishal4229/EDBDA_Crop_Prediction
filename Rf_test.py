@@ -10,7 +10,7 @@ import pickle
 class RFTest:
 
     def __init__(self):
-        self.filename = "RF_model.pkl"
+        self.filename = "RF_model.h5"
         self.df = pd.read_csv('dataset/1.csv',converters={'Season': str.strip})
         self.cropsDict = dict()
         self.seasonDict = dict()
@@ -59,25 +59,30 @@ class RFTest:
 
 
     def RF_Predict(self, state, crop, season, district,area ):
+        predictions=[]
         index = self.state1Dict.get(state)
-        index1 = self.cropsDict.get(crop)
         index2 = self.seasonDict.get(season)
-        print(season,"hii")
         index3 = self.dist1Dict.get(district)
-        # print(index3)
-        print(index2)
-        print(index, index1, index2, index3)
         model = joblib.load(self.filename)
-        Xnew = np.array([[index, index1, index2, index3, area]]).reshape((1, -1))
-        #int(Xnew)
-        predictions = model.predict(Xnew)
-        return (round(predictions[0] * 1000000, 2))
+        for i in range(0,3):
+            index1 = self.cropsDict.get(crop[i])
+            print(index1)
+            print(index, index1, index2, index3)
+
+            Xnew = np.array([[index, index1, index2, index3, area]]).reshape((1, -1))
+            #int(Xnew)
+            prediction1 = model.predict(Xnew)
+            prediction1 = prediction1.tolist()
+            predictions.append(round(prediction1[0] * 1000000, 2))
+            print(predictions)
+        return predictions
 
 
 if __name__ == "__main__":
     # Values taken from dataset/rainTempPh
+    yeild=[]
     state = "Andhra Pradesh"
-    crop = "Maize"
+    crop = ["Maize","Bajra","Cotton"]
     season = "Kharif"
     district = "GUNTUR"
     # convert area to per 1000 hectare
@@ -89,5 +94,5 @@ if __name__ == "__main__":
     yeild = 0
     yeild = model.RF_Predict(state, crop, season, district, area)
     print(yeild)
-    print("kg", yeild)
-    print("Quintal", yeild / 100)
+    # print("kg", yeild)
+    # print("Quintal", yeild / 100)
