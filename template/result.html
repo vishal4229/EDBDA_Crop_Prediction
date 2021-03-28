@@ -119,11 +119,9 @@
 
 </style>
 <body style="background-color: darkorchid">
-<div>
-    <marquee direction="right">
+<div class="text-center">
         <h3>Most suitable Crop</h3>
         <!--        <button>Crop</button>-->
-    </marquee>
 </div>
 <div class="container-fluid" style=" padding:5px; margin-top:5px">
     <div class="container-fluid">
@@ -206,10 +204,10 @@
 
     <!--end 1-->
 
-    <marquee direction="right">
-        <button type="button" class="ch1" onclick="myFun()">Click For More Recommendation</button>
+<div class="text-center" style="margin-top:2%">
+    <button type="button" class="ch1" id="ch2" onclick="myFun()">Click For More Recommendation</button>
 
-    </marquee>
+</div>
 
     <div id="mydiv" class="myid">
         <div class="container-fluid slideright" style=" padding:5px; margin-top:5px">
@@ -385,6 +383,8 @@
 <script>
     b= 0;
     function myFun() {
+        var y = document.getElementById("ch2");
+        y.style.display = 'none';
         var x = document.getElementById("mydiv");
         if(b==0){
         x.style.display = "none"

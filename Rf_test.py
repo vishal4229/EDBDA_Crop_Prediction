@@ -65,6 +65,7 @@ class RFTest:
         index3 = self.dist1Dict.get(district)
         model = joblib.load(self.filename)
         for i in range(0,3):
+            print(crop[i])
             index1 = self.cropsDict.get(crop[i])
             print(index1)
             print(index, index1, index2, index3)
@@ -82,7 +83,7 @@ if __name__ == "__main__":
     # Values taken from dataset/rainTempPh
     yeild=[]
     state = "Andhra Pradesh"
-    crop = ["Maize","Bajra","Cotton"]
+    crop = ['Bajra', 'Cowpea', 'Groundnut']
     season = "Kharif"
     district = "GUNTUR"
     # convert area to per 1000 hectare

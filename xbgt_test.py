@@ -29,7 +29,7 @@ class XgbtTest:
         self.df['Crop'] = [self.cropsDict.get(crop) for crop in self.df['Crop']]
 
     def xgbt_Predict(self, rainfall, temp, ph):
-        c1=[]
+        c1 = []
         model = pickle.load(open(self.file1, "rb"))
         print(rainfall, temp, ph)
         Xnew = np.array([[rainfall, temp, ph]]).reshape((1, -1))
@@ -42,24 +42,23 @@ class XgbtTest:
         pred1[0] = pred1[0][::-1]
         pred1 = pred1[0].tolist()
 
+        print(pred1)
+        print(predictions)
+        print(pred2)
 
-        # print(pred1)
-        # print(predictions)
-        # print(pred2)
-
-        for i in range(0,3):
+        for i in range(0, 3):
             a1 = pred2.index(pred1[i])
-            a1+=1
+            a1 += 1
             c1.append(self.get_key(a1))
         print(c1)
         return c1
 
 
 if __name__ == "__main__":
-    crop=[]
-    rainfall = 500
-    temperature = 29
+    crop = []
+    rainfall = 550
+    temperature = 15
     ph = 6
     model = XgbtTest()
     crop = model.xgbt_Predict(rainfall, temperature, ph)
-    print("Best suitable top three crop is :",crop)
+    print("Best suitable top three crop is :", crop)
