@@ -167,7 +167,7 @@ def predict():
     district = request.form['district']
     season = season.strip()
     print(state)
-    print(season, "Hii")
+    #print(season, "Hii")
     print(temperature, rainfall, ph, area, season)
 
     model = XgbtTest()

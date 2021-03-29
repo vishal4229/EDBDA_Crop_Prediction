@@ -26,7 +26,7 @@ def cropss(crop_name):
                      "Usa,Sri-Lanka,Canada,Dubai"],
         "Potato": ["Madhya Pradesh, Maharashtra, Madhya Pradesh and Maharashtra", "Kharif,Rabi",
                    "China, Bangladesh,Usa"],
-        "Peas": ["Punjab, Haryana, Maharashtra, Tamil Nadu, Madhya Pradesh, Gujarat", "Kharif",
+        "Peas & beans (Pulses)": ["Punjab, Haryana, Maharashtra, Tamil Nadu, Madhya Pradesh, Gujarat", "Kharif",
                  "Usa,Singapore,Dubai"],
         "Turmeric": ["Tamil Nadu , Orissa ,West Bengal", "kharif, Rabi", "Usa,Singapore,Dubai,Qatar,Bangladesh"],
         "Onion": ["Maharashtra,Madhya Pradesh,Karnataka,Gujarat", "Kharif ,Rabi",
@@ -143,7 +143,7 @@ def cropdes(crop_name):
             "It is known as the most valuable crop of India. It is used as a principle ingredient of various curries and chutneys, also used in vegetables, spices, condiments, sauces and pickles. Pungency in chillies is due to the active constituent Capsaicin, an alkaloid."],
         "Potato": [
             "Potato is mostly grown as a rainfed crop in regions receiving a rainfall of 1200 – 2000 mm per annum. Planting is done during October – November in plains. About 3000 – 3500 kg/ha of seeds is required. Use Carbon disulphide 30 g/100 kg of seeds for breaking the dormancy and inducing sprouting of tubers.26"],
-        "Peas": [
+        "Peas & beans (Pulses)": [
             "It belongs to Leguminaceae family. It is a cool season crop grown throughout the world. Green pods are used for vegetable purpose and dried peas are used as pulse. In India it is cultivated in Himachal Pradesh, Madhya Pradesh, Rajasthan, Maharashtra, Punjab, Haryana, Karnataka and Bihar."],
         "Turmeric": [
             "Turmeric can be grown from sea level to 1500m in the hills, at a temperature range of 20-300C with a rainfall of 1500-2250mm per annum. It is also grown as an irrigated crop. It thrives best in a well drained sandy or clayey loam rich in humus content.light black, ashy loam and red soils to clay loams."],
@@ -250,7 +250,7 @@ def fert(crop_name):
         "Coconut": ["Sandy soil","Nitrogen , Phosphorous , Potassium ", "30:10:10"],
         "Chillies": ["Sandy soil","Nitrogen , Phosphorous , Potassium ", "70:60:50"],
         "Potato": ["Sandy soil","Nitrogen , Phosphorous , Potassium ", "30:10:10"],
-        "Peas": ["Sandy soil","Nitrogen , Phosphorous , Potassium ", "30:10:10"],
+        "Peas & beans (Pulses)": ["Sandy soil","Nitrogen , Phosphorous , Potassium ", "30:10:10"],
         "Turmeric": ["Sandy soil","Nitrogen , Phosphorous , Potassium ", "70:60:50"],
         "Onion": ["Sandy soil","Nitrogen , Phosphorous , Potassium ", "30:10:10"],
         "Banana": ["Sandy soil","Nitrogen , Phosphorous , Potassium ", "70:60:50"],
