@@ -26,7 +26,7 @@ def cropss(crop_name):
                      "Usa,Sri-Lanka,Canada,Dubai"],
         "Potato": ["Madhya Pradesh, Maharashtra, Madhya Pradesh and Maharashtra", "Kharif,Rabi",
                    "China, Bangladesh,Usa"],
-        "Peas & beans (Pulses)": ["Punjab, Haryana, Maharashtra, Tamil Nadu, Madhya Pradesh, Gujarat", "Kharif",
+        "Peas": ["Punjab, Haryana, Maharashtra, Tamil Nadu, Madhya Pradesh, Gujarat", "Kharif",
                  "Usa,Singapore,Dubai"],
         "Turmeric": ["Tamil Nadu , Orissa ,West Bengal", "kharif, Rabi", "Usa,Singapore,Dubai,Qatar,Bangladesh"],
         "Onion": ["Maharashtra,Madhya Pradesh,Karnataka,Gujarat", "Kharif ,Rabi",

@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <title>Login</title>
@@ -62,10 +63,12 @@
                 opacity: 0;
                 transform: scale(1.5);
             }
+
             90% {
                 opacity: 1;
                 transform: scale(0.7);
             }
+
             100% {
                 opacity: 1;
                 transform: scale(1);
@@ -77,6 +80,7 @@
                 opacity: 0;
                 transform: translateY(+200px);
             }
+
             100% {
                 opacity: 1;
                 transform: translateY(0%);
@@ -88,6 +92,7 @@
                 opacity: 0;
                 transform: translateY(+200px);
             }
+
             100% {
                 opacity: 1;
                 transform: translateY(0%);
@@ -99,6 +104,7 @@
                 opacity: 0;
                 transform: translateY(+200px);
             }
+
             100% {
                 opacity: 1;
                 transform: translateY(0%);
@@ -110,6 +116,7 @@
                 opacity: 0;
                 transform: translateY(+200px);
             }
+
             100% {
                 opacity: 1;
                 transform: translateY(0%);
@@ -121,6 +128,7 @@
                 opacity: 0;
                 transform: translateY(+200px);
             }
+
             100% {
                 opacity: 1;
                 transform: translateY(0%);
@@ -138,50 +146,99 @@
     <!-- Custom styles for this template -->
     <link href="../static/login.css" rel="stylesheet">
 </head>
+
 <body class="text-center">
-
-<main class="form-signin">
-    <form action="/success" method="POST">
-        <img class="mb-4 logoload" src="../static/logo.gif" alt="" width="72" height="57">
-        <h1 class="h3 mb-3 fw-normal logoload" style="color: black ">Sign In</h1>
-        <label for="inputEmail" class="visually-hidden slideup" style="color: black "><b>Email address</b></label>
-        <input type="email" name="email" class="form-control slideup1" placeholder="Email address" required autofocus>
-        <label for="inputPassword " class="visually-hidden slideup2" style="color: black "><b>Password</b></label>
-        <input type="password" name="password" class="form-control slideup3" placeholder="Password" required>
-        <div class="checkbox mb-3 slideup3">
-            <label>
-                <input type="checkbox" value="remember-me" style="color: black "><b>Remember me</b>
-            </label>
-        </div>
-        <div class="slideup4">
-            <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
-            <div class="text-center" style="color: white; "><b>New User?</b> <a href="/register"
-                                                                                style="color: aqua"><b><u>Register</u></b></a>
+    <main class="form-signin">
+        <form action="/success" method="POST">
+            <img class="mb-4 logoload" src="../static/logo.gif" alt="" width="72" height="57">
+            <h1 class="h3 mb-3 fw-normal logoload" style="color: black ">Sign In</h1>
+            <label for="inputEmail" class="visually-hidden slideup" style="color: black "><b>Email address</b></label>
+            <input type="email" name="email" class="form-control slideup1" placeholder="Email address" required
+                autofocus>
+            <label for="inputPassword " class="visually-hidden slideup2" style="color: black "><b>Password</b></label>
+            <input type="password" name="password" class="form-control slideup3" placeholder="Password" required>
+            <div class="checkbox mb-3 slideup3">
+                <label>
+                    <input type="checkbox" value="remember-me" style="color: black "><b>Remember me</b>
+                </label>
             </div>
-            <div class="text-center">
-                <a type="button" style="color:aqua" onclick="forgetpass()"><u>Forget pass</u></a></div>
-        </div>
-        <p class="mt-5 mb-3 text-muted" style="color: chartreuse">&copy;EDBDA</p>
-    </form>
-</main>
+            <div class="slideup4">
+                <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
+                <div class="text-center" style="color: white; "><b>New User?</b> <a href="/register"
+                        style="color: aqua"><b><u>Register</u></b></a>
+                </div>
+                <div class="text-center">
+                    <a type="button" style="color:aqua" onclick="forgetpass()"><u>Forget pass</u></a>
+                </div>
+            </div>
+            <!-- Add the flash message display here -->
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="alert alert-{{ messages[0].type }} text-center" style="color:red">
+                    {{ messages[0] }}
+                </div>
+            {% endif %}
+            {% endwith %}
+            <p class="mt-5 mb-3 text-muted" style="color: chartreuse">&copy;Agriculture</p>
+        </form>
+    </main>
 
-<div id="fade" class="black_overlay"></div>
+    <div id="fade" class="black_overlay"></div>
 
-<div id="light" class="white_content login-form" style="color: black;">
-    <i class="fa fa-window-close-o" aria-hidden="true" style="background-color: white " href="javascript:void(0)"
-       onclick="document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'"></i>
-    <div>
-        <form action="/" method="get">
+    <div id="light" class="white_content login-form">
+        <div class="container">
+            <button class="close-button" onclick="closeResetPasswordForm()">
+                <i class="fa fa-times" aria-hidden="true"></i>
+            </button>
             <h2 class="text-center">Password Reset</h2>
-            <div class="form-group">
-                <input type="text" name="cemail1" id="cemail" class="form-control" placeholder="Enter Email"
-                       required="required">
+            <form action="/" method="get">
+                <div class="form-group">
+                    <label for="cemail1">Email</label>
+                    <input type="text" name="cemail1" id="cemail1" class="form-control" placeholder="Enter Email"
+                        required="required">
+                </div>
+                <div class="form-group">
+                    <button type="button" class="btn btn-primary btn-block" onclick="showSuccessMessage();">Reset
+                        Password</button>
+                </div>
+            </form>
+            <script>
+                function closeResetPasswordForm() {
+                    document.getElementById('light').style.display = 'none';
+                    document.getElementById('fade').style.display = 'none';
+                }
 
-            </div>
-            <div class="form-group">
-                <button type="submit" class="btn btn-primary btn-block" onclick="forgetpass1({{ a }});">Log in</button>
-            </div>
-    </div>
-</div>
+                function showSuccessMessage() {
+                    const dataToPost = document.getElementById('cemail1').value;
+
+                    // Use a relative path to call the Flask API with a POST request
+                    fetch('/resetpass', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ data: dataToPost })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.result.status === 'success'){
+                            alert('Password Reset Details Sent on Email');
+                            }
+                            else{
+                                alert('Email Not Registered');
+                            }
+                            document.getElementById('light').style.display = 'none';
+                            document.getElementById('fade').style.display = 'none';
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                    // Display the success message in a popup
+
+                }
+            </script>
+
+
 </body>
+
 </html>

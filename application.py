@@ -2,7 +2,7 @@ import datetime
 from random import randint
 from flask import *
 from flask_mail import Mail, Message
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, url_for, flash, session, redirect
 import mysql.connector
 from filter import Filter
 from Stats import Stat
@@ -12,136 +12,218 @@ from xbgt_test import XgbtTest
 from Rf_test import RFTest
 from flask import jsonify, make_response
 import math
+from itsdangerous import URLSafeTimedSerializer, BadSignature
+import json
 
-application = app = Flask(__name__, template_folder='template')
-app.secret_key = 'the random string'
+application = app = Flask(__name__, template_folder="template")
+app.secret_key = "the random string"
+mail = Mail(app)
+serializer = URLSafeTimedSerializer("crop_prediction")
+
+
+app.config["MAIL_SERVER"] = ""
+app.config["MAIL_PORT"] = 587
+app.config["MAIL_USERNAME"] = ""
+app.config["MAIL_PASSWORD"] = ""
+app.config["MAIL_USE_TLS"] = True
+app.config["MAIL_USE_SSL"] = False
 mail = Mail(app)
 
-app.config["MAIL_SERVER"] = 'smtp.gmail.com'
-app.config["MAIL_PORT"] = 465
-app.config["MAIL_USERNAME"] = 'ronshawn29@gmail.com'
-app.config['MAIL_PASSWORD'] = 'ViS29@@@'
-app.config['MAIL_USE_TLS'] = False
-app.config['MAIL_USE_SSL'] = True
-mail = Mail(app)
-otp = randint(000000, 999999)
-
-mydb = mysql.connector.connect(
-    host="agri.cj9kv3v4akuv.us-east-2.rds.amazonaws.com",
-    user="inferno",
-    password="vishal2942",
-    database="useragri"
-)
-vars = []
-
-otps = {
-
-    "otp2": otp,
-}
+sender_email = ""
 
 
-@app.route('/')
+def call_db():
+    mydb = mysql.connector.connect(
+        host="",
+        user="",
+        password="",
+        database="",
+        port=28175,
+    )
+
+    return mydb
+
+
+@app.route("/")
 def root():
-    return render_template('login.html')
+    return render_template("login.html")
 
 
-@app.route('/suggestedcrops', methods=["POST"])
+@app.route("/suggestedcrops", methods=["POST"])
 def suggestedcrops():
-    state = request.form['state']
+    state = request.form["state"]
     crops = Filter()
     crops = crops.findCrops(state)
     return render_template("filtered.html", crops=crops)
 
 
-@app.route('/register')
+@app.route("/register")
 def register():
-    return render_template('register.html', otps=otps)
+    return render_template("register.html")
 
 
-@app.route('/cropsuggest')
+@app.route("/cropsuggest")
 def cropsuggestt():
-    return render_template('cropsuggest.html', otps=otps)
+    return render_template("cropsuggest.html")
 
 
-@app.route('/success', methods=["POST"])
+@app.route("/success", methods=["POST"])
 def success():
     email1 = request.form["email"]
     pass1 = request.form["password"]
     print(email1, pass1)
-
+    mydb = call_db()
     mycursor = mydb.cursor()
 
-    mycursor.execute('SELECT * FROM login WHERE email = %s AND password = %s', (email1, pass1,))
+    mycursor.execute(
+        "SELECT * FROM login WHERE email = %s AND password = %s AND verified = 1",
+        (
+            email1,
+            pass1,
+        ),
+    )
     checkUsername = mycursor.fetchone()
     print(checkUsername)
     if checkUsername != None:
-        return render_template('cropsuggest.html')
+        if checkUsername[3] == 0:
+            flash("User not Verified , verify your email link sent to your email")
+            send_verify_link(checkUsername[0])
+            return render_template("login.html")
+        else:
+            return render_template("cropsuggest.html")
     else:
-        return "<h1>No Matching User Found</h1>"
+        flash("User Not Found")
+        return render_template("login.html")
 
 
-@app.route('/success1', methods=["POST"])
-def success1():
-    email2 = request.get_data().decode("utf-8")
-
-    print(email2)
-    msg = Message('OTP', sender='username@gmail.com', recipients=[email2])
-    msg.body = str(otp)
+def send_verify_link(email):
+    msg = Message("OTP", sender=sender_email, recipients=[email])
+    verify_account_url = url_for("verify_account", email=email, _external=True)
+    msg.body = f"Click the following link to verify your account: {verify_account_url}"
     mail.send(msg)
 
 
-@app.route('/validate', methods=["POST"])
-def validate():
-    if request.method == 'POST':
-
-        data = request.get_data().decode("utf-8")
-        str = ""
-        i = 0
-        for i in range(len(data)):
-            if data[i] == '|':
-                vars.append(str)
-                str = ""
-                continue
-            str += data[i]
-
-
-@app.route('/verified', methods=["POST"])
-def verfied():
-    global vars
+@app.route("/verify_account/<email>", methods=["GET", "POST"])
+def verify_account(email):
+    mydb = call_db()
     mycursor = mydb.cursor()
-    mycursor.execute("""INSERT INTO login values(%s,%s,%s)""", (vars[0], vars[2], vars[1]))
+    if request.method == "POST":
+        otp = request.form.get("otp")
+        mycursor.execute("UPDATE login SET verified = 1 WHERE email = %s", (email,))
+        mydb.commit()
+    return render_template("verify_account.html", email=email)
+
+
+@app.route("/send_otp", methods=["POST"])
+def send_otp():
+    mydb = call_db()
+    mycursor = mydb.cursor()
+    email2 = request.get_data().decode("utf-8")
+    otp = randint(000000, 999999)
+    sql = """INSERT INTO otp (email, otp_code) VALUES (%s, %s)
+         ON DUPLICATE KEY UPDATE otp_code = VALUES(otp_code)"""
+
+    # Execute the SQL statement with the provided values
+    mycursor.execute(sql, (email2, otp))
     mydb.commit()
-    vars = []
-    return render_template("login.html")
+    mycursor.close()
+    mydb.close()
+    msg = Message("OTP", sender=sender_email, recipients=[email2])
+    msg.body = str(otp)
+    mail.send(msg)
+    return jsonify(result={"status": "success"})
 
 
-@app.route('/resetpass', methods=['POST'])
-def resetpass():
-    cemail = request.get_data().decode("utf-8")
-    print(cemail)
-
+@app.route("/verified", methods=["POST"])
+def verfied():
+    mydb = call_db()
+    data = request.get_data().decode("utf-8")
+    print(data)
+    email = json.loads(data)["email"]
+    otp_recived = json.loads(data)["otp"]
     mycursor = mydb.cursor()
-    mycursor.execute('SELECT * FROM login WHERE email = %s', (cemail,))
-    checkusername = mycursor.fetchone()
+    mycursor.execute("SELECT otp_code from otp where email = %s", (email,))
+    otp = mycursor.fetchone()
+    print(otp)
+    if otp[0] == otp_recived:
+        mycursor = mydb.cursor()
+        mycursor.execute("UPDATE login SET verified = 1 WHERE email = %s", (email,))
+        mydb.commit()
+        return jsonify(result={"status": "success"})
+
+    mycursor.close()
+    mydb.close()
+    return jsonify(result={"status": "failed"})
+
+
+@app.route("/validate", methods=["POST"])
+def validate():
+    mydb = call_db()
+    if request.method == "POST":
+        data = request.get_data().decode("utf-8")
+        print(data)
+        login_data = data.split("|")
+        mycursor = mydb.cursor()
+        mycursor.execute(
+            """INSERT INTO login (username,email,password) values(%s,%s,%s)""",
+            (login_data[1], login_data[0], login_data[2]),
+        )
+        mydb.commit()
+        mycursor.close()
+        mydb.close()
+
+        return jsonify(result={"status": "success"})
+
+
+@app.route("/resetpass", methods=["POST"])
+def reset_password():
+    mydb = call_db()
+    cemail = request.get_data().decode("utf-8")
+    email = json.loads(cemail)["data"]
+    mycursor = mydb.cursor()
+    mycursor.execute("SELECT * FROM login WHERE email = %s", (email,))
+    checkusername = mycursor.fetchone()[0]
     print(checkusername)
-
-    if (checkusername != None):
-        # mycursor.execute('UPDATE login SET password = %s,WHERE email=%s',(cpass,cemail,))
-        mycursor.execute('SELECT password FROM login WHERE email = %s', (cemail,))
-        check1 = mycursor.fetchone()
-
-        msg = Message('OTP', sender='username@gmail.com', recipients=[cemail])
-        msg.body = str(check1[0])
+    if checkusername:
+        # Generate a unique token and URL for password reset
+        token = serializer.dumps(email, salt="password-reset-salt")
+        reset_url = url_for("confirm_password_reset", token=token, _external=True)
+        # Send a password reset email to the user
+        msg = Message("Password Reset", sender=sender_email, recipients=[email])
+        msg.body = f"Click the following link to reset your password: {reset_url}"
         mail.send(msg)
-
-        a = 1;
-
-
+        return jsonify(result={"status": "success"})
     else:
-        return "<h1>Email not found</h1>"
+        return jsonify(result={"status": "error", "message": "Email not found"})
 
 
-@app.route('/index')
+@app.route("/confirm-password-reset/<token>", methods=["GET", "POST"])
+def confirm_password_reset(token):
+    try:
+        mydb = call_db()
+        mycursor = mydb.cursor()
+        email = serializer.loads(token, salt="password-reset-salt", max_age=3600)
+        if request.method == "POST":
+            new_password = request.form.get("new_password")
+            print(new_password)
+            mycursor.execute(
+                "UPDATE login SET password = %s WHERE email = %s",
+                (
+                    new_password,
+                    email,
+                ),
+            )
+
+            mydb.commit()
+            flash("Password reset successful")
+            # return redirect(url_for('root'))
+        return render_template("confirm_password_reset.html", email=email)
+    except BadSignature:
+        flash("Invalid or expired token,Please Reset pass Again")
+        # return redirect(url_for('root'))
+
+
+@app.route("/index")
 def index():
     states = Filter()
     states = states.findStates()
@@ -149,32 +231,32 @@ def index():
     seasons = seasons.findSeason()
     # districts = Filter()
     # districts = districts.findDistrict()
-    return render_template('input.html', states=states, seasons=seasons)
+    return render_template("input.html", states=states, seasons=seasons)
 
 
-@app.route('/predict', methods=["POST"])
+@app.route("/predict", methods=["POST"])
 def predict():
     crop_d = []
-    crop_d1 =[]
-    crop_fr =[]
-    rainfall = float(request.form['rainfall'])
-    temperature = float(request.form['temperature'])
-    ph = float(request.form['ph'])
-    area = float(request.form['area'])
+    crop_d1 = []
+    crop_fr = []
+    rainfall = float(request.form["rainfall"])
+    temperature = float(request.form["temperature"])
+    ph = float(request.form["ph"])
+    area = float(request.form["area"])
     area = area * 0.000404686
-    state = request.form['state']
-    season = request.form['season']
-    district = request.form['district']
+    state = request.form["state"]
+    season = request.form["season"]
+    district = request.form["district"]
     season = season.strip()
     print(state)
-    #print(season, "Hii")
+    # print(season, "Hii")
     print(temperature, rainfall, ph, area, season)
 
     model = XgbtTest()
     crop = model.xgbt_Predict(rainfall, temperature, ph)
     model = RFTest()
     yeild = model.RF_Predict(state, crop, season, district, area)
-    for i in range(0,3):
+    for i in range(0, 3):
         crop_d.append(crops.cropdes(crop[i])[crop[i]])
         crop_d1.append(crops.cropss(crop[i]))
         crop_fr.append(crops.fert(crop[i]))
@@ -183,50 +265,51 @@ def predict():
     # print(crop_d1)
     print(crop_fr)
     result = {
-        'crop' : crop,
-        'yeild' : yeild,
-        'crop_des1' : crop_d,
-        'crop_d1':crop_d1,
-        'crop_d2':crop_d1,
-        'crop_fr':crop_fr
+        "crop": crop,
+        "yeild": yeild,
+        "crop_des1": crop_d,
+        "crop_d1": crop_d1,
+        "crop_d2": crop_d1,
+        "crop_fr": crop_fr,
     }
-    return render_template("result.html", result = result)
+    return render_template("result.html", result=result)
 
 
 # @app.context_processor
-@app.route('/index1', methods=['POST', 'GET'])
+@app.route("/index1", methods=["POST", "GET"])
 def index1():
     global text
 
 
-@app.route('/send')
+@app.route("/send")
 def senddis():
     dis3 = Filter()
     dis3 = dis3.findDistrict()
-    # dis1 = {
-    #     "Andaman and Nicobar Islands": ['NICOBARS', 'NORTH AND MIDDLE ANDAMAN', 'SOUTH ANDAMANS'],
-    #     "Andhra Pradesh": ['ANANTAPUR', 'CHITTOOR', 'EAST GODAVARI', 'GUNTUR', 'KADAPA', 'KRISHNA',
-    #                        'KURNOOL', 'PRAKASAM', 'SPSR NELLORE', 'SRIKAKULAM', 'VISAKHAPATANAM'
-    #         , 'VIZIANAGARAM', 'WEST GODAVARI'],
-    #     "Arunachal Pradesh": ['ANJAW', 'CHANGLANG', 'DIBANG VALLEY', 'EAST KAMENG', 'EAST SIANG',
-    #                           'KURUNG KUMEY', 'LOHIT', 'LONGDING', 'LOWER DIBANG VALLEY', 'LOWER SUBANSIRI'
-    #         , 'NAMSAI', 'PAPUM PARE', 'TAWANG', 'TIRAP', 'UPPER SIANG', 'UPPER SUBANSIRI',
-    #                           'WEST KAMENG', 'WEST SIANG'],
-    #     "Assam": ['BAKSA', 'BARPETA', 'BONGAIGAON', 'CACHAR', 'CHIRANG', 'DARRANG', 'DHEMAJI',
-    #               'DHUBRI', 'DIBRUGARH', 'DIMA HASAO', 'GOALPARA', 'GOLAGHAT', 'HAILAKANDI',
-    #               'JORHAT', 'KAMRUP', 'KAMRUP METRO', 'KARBI ANGLONG', 'KARIMGANJ', 'KOKRAJHAR',
-    #               'LAKHIMPUR', 'MARIGAON', 'NAGAON', 'NALBARI', 'SIVASAGAR', 'SONITPUR',
-    #               'TINSUKIA', 'UDALGURI']
-    # }
-
     return jsonify(result=dis3)
 
 
-@app.route('/stats')
+@app.route("/stats")
 def stats():
-    crops = ['Wheat', 'Paddy', 'Barley', 'Groundnut', 'Cotton', 'Coconut',
-             'Maize', 'Soyabean', 'Moong', 'Bajra', 'Chillies', 'Gram', 'Jowar', 'Potato'
-        , 'Peas', 'Sugarcane', 'Turmeric', 'Onion']
+    crops = [
+        "Wheat",
+        "Paddy",
+        "Barley",
+        "Groundnut",
+        "Cotton",
+        "Coconut",
+        "Maize",
+        "Soyabean",
+        "Moong",
+        "Bajra",
+        "Chillies",
+        "Gram",
+        "Jowar",
+        "Potato",
+        "Peas",
+        "Sugarcane",
+        "Turmeric",
+        "Onion",
+    ]
     n = len(crops)
     num = n // 6 + math.ceil(n // 6 - n / 6)
     a = n // 6
@@ -241,13 +324,12 @@ def stats():
     else:
         num = num + 1
     param = {
-        'size': 6,
-        'range1': range(num),
-        'range': range(6),
-        'names': crops,
-        'range2': range(1),
-        'cnt': n
-
+        "size": 6,
+        "range1": range(num),
+        "range": range(6),
+        "names": crops,
+        "range2": range(1),
+        "cnt": n,
     }
     return render_template("stats.html", param=param)
 
@@ -255,14 +337,9 @@ def stats():
 pr = price()
 
 
-@app.route('/stats/<name>')
+@app.route("/stats/<name>")
 def statview(name):
-    param = {
-        'name': name,
-        'range1': range(2),
-        'range': range(6)
-
-    }
+    param = {"name": name, "range1": range(2), "range": range(6)}
 
     cur_price = pr.cur_price(name)
     max_price, min_price, full_year = pr.priceyear(name)
@@ -285,25 +362,19 @@ def statview(name):
         "x_cord": x_cord,
         "y_cord": y_cord,
         "p_x_cord": p_x_cord,
-        "p_y_cord": p_y_cord
+        "p_y_cord": p_y_cord,
     }
     return render_template("statview.html", param=param, crops_dat=crops_dat)
 
 
-@app.route('/trend')
+@app.route("/trend")
 def trend():
     top = pr.firstfive()
     bot = pr.bottomfive()
     topyear = pr.yeartopfive()
 
-    data1 = {
-
-        "top": top,
-        "bot": bot,
-        "topyear": topyear
-
-    }
+    data1 = {"top": top, "bot": bot, "topyear": topyear}
     return render_template("/trend.html", data1=data1)
 
 
-app.run(host='127.0.0.1', port=4000, debug=True)
+app.run(host="127.0.0.1", port=4000, debug=True)

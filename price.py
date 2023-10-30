@@ -24,13 +24,29 @@ base = {
 annual_rain = [29, 21, 37.5, 30.7, 52.6, 150, 299, 251.7, 179.2, 70.5, 39.8, 10.9]
 prev_rainn = [10, 24, 30.5, 25.7, 42.6, 130, 360, 351.7, 229.2, 50, 40, 13]
 
-lst1 = ["Wheat", 'Paddy', 'Barley', 'Bajra', 'Chillies', 'Coconut', 'Cotton', 'Gram', 'Groundnut', 'Jowar', 'Maize',
-        'Moong',
-        'Onion', 'Peas', 'Soyabean', 'Sugarcane', 'Turmeric', 'Potato']
+lst1 = [
+    "Wheat",
+    "Paddy",
+    "Barley",
+    "Bajra",
+    "Chillies",
+    "Coconut",
+    "Cotton",
+    "Gram",
+    "Groundnut",
+    "Jowar",
+    "Maize",
+    "Moong",
+    "Onion",
+    "Peas",
+    "Soyabean",
+    "Sugarcane",
+    "Turmeric",
+    "Potato",
+]
 
 
 class price:
-
     def __init__(self):
         self.pred_list = []
         Wheat = Stat("dataset/Wheat.csv")
@@ -79,7 +95,7 @@ class price:
         b = lst1.index(name)
         val = self.pred_list[b]
 
-        print('hi', val)
+        print("hi", val)
         cur_wpi = val.pred([float(cur_month), cur_year, cur_rainfall])
         cur_price = (base[name] * cur_wpi) / 100
         cur_price = round(cur_price, 2)
@@ -101,10 +117,13 @@ class price:
         val = self.pred_list[b]
         for i in range(1, 13):
             if cur_month - i >= 1:
-                month_year.append((cur_month - i, cur_year, prev_rainn[cur_month - i - 1]))
+                month_year.append(
+                    (cur_month - i, cur_year, prev_rainn[cur_month - i - 1])
+                )
             else:
                 month_year.append(
-                    (cur_month - i + 12, cur_year - 1, prev_rainn[cur_month - i + 11]))
+                    (cur_month - i + 12, cur_year - 1, prev_rainn[cur_month - i + 11])
+                )
 
         for m1, y1, r1 in month_year:
             cur_pred = val.pred([float(m1), y1, r1])
@@ -132,10 +151,13 @@ class price:
         month_year = []
         for i in range(1, 13):
             if cur_month + i <= 12:
-                month_year.append((cur_month + i, cur_year, annual_rain[cur_month + i - 1]))
+                month_year.append(
+                    (cur_month + i, cur_year, annual_rain[cur_month + i - 1])
+                )
             else:
                 month_year.append(
-                    (cur_month + i - 12, cur_year + 1, annual_rain[cur_month + i - 13]))
+                    (cur_month + i - 12, cur_year + 1, annual_rain[cur_month + i - 13])
+                )
 
         min_v = 100000
         max_v = 0
@@ -166,7 +188,9 @@ class price:
             m, y, r = month_year[i]
             x = datetime(y, m, 1)
             x = x.strftime("%b %y")
-            crops_pr.append([x, round((wpi1[i] * base[name]) / 100, 2), round(bb[i], 2)])
+            crops_pr.append(
+                [x, round((wpi1[i] * base[name]) / 100, 2), round(bb[i], 2)]
+            )
         x = datetime(max_y, max_m, 1)
         x = x.strftime("%b %y")
         max_price = [x, round(max_v, 2)]
@@ -192,14 +216,21 @@ class price:
             print(cur_predict)
             prev_predict = i.pred([float(prev_month), cur_year, prev_rainfall])
             prev_month_pred.append(prev_predict)
-            change1.append((((cur_predict - prev_predict) * 100 / prev_predict), self.pred_list.index(i)))
+            change1.append(
+                (
+                    ((cur_predict - prev_predict) * 100 / prev_predict),
+                    self.pred_list.index(i),
+                )
+            )
         sort1 = change1
         sort1.sort(reverse=True)
         top = []
         for j in range(0, 5):
             p, i = sort1[j]
-            name = self.pred_list[i].returnName().split('/')[1]
-            top.append([name, round((cur_month_pred[i] * base[name]) / 100, 2), round(p, 2)])
+            name = self.pred_list[i].returnName().split("/")[1]
+            top.append(
+                [name, round((cur_month_pred[i] * base[name]) / 100, 2), round(p, 2)]
+            )
 
         return top
 
@@ -218,14 +249,21 @@ class price:
             cur_month_pred.append(cur_predict)
             prev_predict = i.pred([float(prev_month), cur_year, prev_rain])
             prev_month_pred.append(prev_predict)
-            change1.append((((cur_predict - prev_predict) * 100 / prev_predict), self.pred_list.index(i)))
+            change1.append(
+                (
+                    ((cur_predict - prev_predict) * 100 / prev_predict),
+                    self.pred_list.index(i),
+                )
+            )
         sort1 = change1
         sort1.sort()
         bot = []
         for j in range(0, 5):
             p, i = sort1[j]
-            name = self.pred_list[i].returnName().split('/')[1]
-            bot.append([name, round((cur_month_pred[i] * base[name]) / 100, 2), round(p, 2)])
+            name = self.pred_list[i].returnName().split("/")[1]
+            bot.append(
+                [name, round((cur_month_pred[i] * base[name]) / 100, 2), round(p, 2)]
+            )
         # print(to_send)
         return bot
 
@@ -243,7 +281,9 @@ class price:
                 price = a[1]
                 change = a[2]
 
-                m["m{}".format(fr)].append([change, price, i.returnName().split("/")[1], time])
+                m["m{}".format(fr)].append(
+                    [change, price, i.returnName().split("/")[1], time]
+                )
                 fr += 1
 
         for a in range(1, 13):
@@ -260,27 +300,41 @@ class price:
         # 0 12 24 36 48
 
         for a in range(1, 13):
-            month_wise.append([m["m{}".format(a)][0][3], m["m{}".format(a)][len(m["m{}".format(a)]) - 1][2],
-                               m["m{}".format(a)][len(m["m{}".format(a)]) - 1][0],
-                               m["m{}".format(a)][len(m["m{}".format(a)]) - 1][1],
-                               m["m{}".format(a)][len(m["m{}".format(a)]) - 2][2],
-                               m["m{}".format(a)][len(m["m{}".format(a)]) - 2][0],
-                               m["m{}".format(a)][len(m["m{}".format(a)]) - 2][1],
-                               m["m{}".format(a)][len(m["m{}".format(a)]) - 3][2],
-                               m["m{}".format(a)][len(m["m{}".format(a)]) - 3][0],
-                               m["m{}".format(a)][len(m["m{}".format(a)]) - 3][1],
-                               m["m{}".format(a)][len(m["m{}".format(a)]) - 4][2],
-                               m["m{}".format(a)][len(m["m{}".format(a)]) - 4][0],
-                               m["m{}".format(a)][len(m["m{}".format(a)]) - 4][1],
-                               m["m{}".format(a)][len(m["m{}".format(a)]) - 5][2],
-                               m["m{}".format(a)][len(m["m{}".format(a)]) - 5][0],
-                               m["m{}".format(a)][len(m["m{}".format(a)]) - 5][1],
-                               m["m{}".format(a)][0][2], m["m{}".format(a)][0][0], m["m{}".format(a)][0][1],
-                               m["m{}".format(a)][1][2], m["m{}".format(a)][1][0], m["m{}".format(a)][1][1],
-                               m["m{}".format(a)][2][2], m["m{}".format(a)][2][0], m["m{}".format(a)][2][1],
-                               m["m{}".format(a)][3][2], m["m{}".format(a)][3][0], m["m{}".format(a)][3][1],
-                               m["m{}".format(a)][4][2], m["m{}".format(a)][4][0], m["m{}".format(a)][4][1]]
-                              )
+            month_wise.append(
+                [
+                    m["m{}".format(a)][0][3],
+                    m["m{}".format(a)][len(m["m{}".format(a)]) - 1][2],
+                    m["m{}".format(a)][len(m["m{}".format(a)]) - 1][0],
+                    m["m{}".format(a)][len(m["m{}".format(a)]) - 1][1],
+                    m["m{}".format(a)][len(m["m{}".format(a)]) - 2][2],
+                    m["m{}".format(a)][len(m["m{}".format(a)]) - 2][0],
+                    m["m{}".format(a)][len(m["m{}".format(a)]) - 2][1],
+                    m["m{}".format(a)][len(m["m{}".format(a)]) - 3][2],
+                    m["m{}".format(a)][len(m["m{}".format(a)]) - 3][0],
+                    m["m{}".format(a)][len(m["m{}".format(a)]) - 3][1],
+                    m["m{}".format(a)][len(m["m{}".format(a)]) - 4][2],
+                    m["m{}".format(a)][len(m["m{}".format(a)]) - 4][0],
+                    m["m{}".format(a)][len(m["m{}".format(a)]) - 4][1],
+                    m["m{}".format(a)][len(m["m{}".format(a)]) - 5][2],
+                    m["m{}".format(a)][len(m["m{}".format(a)]) - 5][0],
+                    m["m{}".format(a)][len(m["m{}".format(a)]) - 5][1],
+                    m["m{}".format(a)][0][2],
+                    m["m{}".format(a)][0][0],
+                    m["m{}".format(a)][0][1],
+                    m["m{}".format(a)][1][2],
+                    m["m{}".format(a)][1][0],
+                    m["m{}".format(a)][1][1],
+                    m["m{}".format(a)][2][2],
+                    m["m{}".format(a)][2][0],
+                    m["m{}".format(a)][2][1],
+                    m["m{}".format(a)][3][2],
+                    m["m{}".format(a)][3][0],
+                    m["m{}".format(a)][3][1],
+                    m["m{}".format(a)][4][2],
+                    m["m{}".format(a)][4][0],
+                    m["m{}".format(a)][4][1],
+                ]
+            )
 
         return month_wise
 
@@ -296,10 +350,13 @@ class price:
         month_year = []
         for i in range(1, 13):
             if cur_month + i <= 12:
-                month_year.append((cur_month + i, cur_year, annual_rain[cur_month + i - 1]))
+                month_year.append(
+                    (cur_month + i, cur_year, annual_rain[cur_month + i - 1])
+                )
             else:
                 month_year.append(
-                    (cur_month + i - 12, cur_year + 1, annual_rain[cur_month + i - 13]))
+                    (cur_month + i - 12, cur_year + 1, annual_rain[cur_month + i - 13])
+                )
         wpi1 = []
         cur_wpi = val.pred([float(cur_month), cur_year, cur_rainfall])
         bb = []
@@ -314,16 +371,18 @@ class price:
             m, y, r = month_year[i]
             c = datetime(y, m, 1)
             c = c.strftime("%b %y")
-            cr_price.append([c, round((wpi1[i] * base[name]) / 100, 2), round(bb[i], 2)])
+            cr_price.append(
+                [c, round((wpi1[i] * base[name]) / 100, 2), round(bb[i], 2)]
+            )
 
         # print("Crop_Price: ", crop_price)
         # print(cr_price)
         return cr_price
 
 
-#pr = price()
-#data = pr.yeartopfive()
-#print(data)
+# pr = price()
+# data = pr.yeartopfive()
+# print(data)
 # for i in range(len(data)):
 #         for j in range(len(data[i])):
 #                 print(data[i][j])

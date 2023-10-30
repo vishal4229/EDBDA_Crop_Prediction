@@ -32,7 +32,7 @@ function  otp_window() {
        $.ajax({
           type: "POST",
           contentType: "application/json;charset=utf-8",
-          url : '/success1',
+          url : '/send_otp',
           traditional: "true",
           data: email,
           });
@@ -46,25 +46,34 @@ function  otp_window() {
 
 }
 
-verified = (otp) => {
+verified = () => {
     document.getElementById("resend1").disabled=true;
-    console.log(otp)
+    otp = ''
     otp1 = document.getElementById('otp1').value;
-    if(otp != otp1){
-        alert("Invalid OTP")
-    }else {
-        $.ajax({
-            type: "POST",
-            contentType: "application/json;charset=utf-8",
-            url: '/verified',
-            traditional: "true",
-            data: "",
+    email = document.getElementById('email3').value;
+    fetch('/verified', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email: email, otp: otp1 })
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.result.status === 'success') {
+          console.log(data);
+          alert("Verified Successfully please login to continue")
+          window.location.href = "/";
+          // Place any code here that relies on the 'otp' value
+        } else {
+          alert('Invalid OTP please try again');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    
 
-        });
-
-      window.location.href = "/";
-
-    }
 }
 let timerOn = true;
 
@@ -102,7 +111,7 @@ resend = () => {
      $.ajax({
         type: "POST",
         contentType: "application/json;charset=utf-8",
-        url: '/success1',
+        url: '/send_otp',
         traditional: "true",
         data: email,
 
